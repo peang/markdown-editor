@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useRef } from 'react';
 import { 
   Bold, 
@@ -13,17 +8,16 @@ import {
   Image, 
   List, 
   Table, 
-  ArrowLeftRight, 
   Download, 
   Upload, 
-  Database, 
-  Sparkles,
+  Save,
+  FolderOpen,
   Sun,
   Moon,
   Eye,
   Edit2,
   Split,
-  RefreshCw
+
 } from 'lucide-react';
 import { MarkdownFile, MarkdownFolder, ViewMode } from '../types';
 
@@ -62,7 +56,6 @@ export default function Toolbar({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workspaceInputRef = useRef<HTMLInputElement>(null);
 
-  // Stats calculation
   const getStats = () => {
     if (!activeFile) return { wCount: 0, cCount: 0 };
     const text = activeFile.content.trim();
@@ -73,7 +66,6 @@ export default function Toolbar({
 
   const { wCount, cCount } = getStats();
 
-  // Helper trigger buttons for file-inserts
   const handleInsert = (type: string) => {
     if (!activeFile) return;
     
@@ -110,194 +102,81 @@ export default function Toolbar({
     }
   };
 
+  const btnBase = "p-1.5 text-[var(--text-muted)] hover:text-[var(--text-heading)] rounded hover:bg-[var(--bg-btn-hover)] disabled:opacity-40 disabled:pointer-events-none transition-colors";
+
   return (
-    <div id="toolbar-container" className="flex flex-wrap items-center justify-between gap-3 p-3 bg-white dark:bg-[#0c0d0e] border-b border-gray-100 dark:border-gray-800 select-none z-10">
+    <div id="toolbar-container" className="flex flex-wrap items-center justify-between gap-3 p-3 bg-[var(--bg-main)] border-b border-[var(--border)] select-none z-10">
       
-      {/* Markdown Insert Helpers */}
       <div className="flex items-center gap-1">
-        <button
-          id="btn-format-bold"
-          disabled={!activeFile}
-          onClick={() => handleInsert('bold')}
-          className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-40 disabled:pointer-events-none transition-colors"
-          title="Insert Bold (Ctrl+B)"
-        >
+        <button id="btn-format-bold" disabled={!activeFile} onClick={() => handleInsert('bold')} className={btnBase} title="Insert Bold (Ctrl+B)">
           <Bold className="h-4 w-4" />
         </button>
-        <button
-          id="btn-format-italic"
-          disabled={!activeFile}
-          onClick={() => handleInsert('italic')}
-          className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-40 disabled:pointer-events-none transition-colors"
-          title="Insert Italic"
-        >
+        <button id="btn-format-italic" disabled={!activeFile} onClick={() => handleInsert('italic')} className={btnBase} title="Insert Italic">
           <Italic className="h-4 w-4" />
         </button>
-        <button
-          id="btn-format-h1"
-          disabled={!activeFile}
-          onClick={() => handleInsert('h1')}
-          className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-40 disabled:pointer-events-none transition-colors"
-          title="Insert Header 1"
-        >
+        <button id="btn-format-h1" disabled={!activeFile} onClick={() => handleInsert('h1')} className={btnBase} title="Insert Header 1">
           <Heading1 className="h-4 w-4" />
         </button>
-        <button
-          id="btn-format-code"
-          disabled={!activeFile}
-          onClick={() => handleInsert('code')}
-          className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-40 disabled:pointer-events-none transition-colors"
-          title="Insert Code Block"
-        >
+        <button id="btn-format-code" disabled={!activeFile} onClick={() => handleInsert('code')} className={btnBase} title="Insert Code Block">
           <Code className="h-4 w-4" />
         </button>
-        <button
-          id="btn-format-link"
-          disabled={!activeFile}
-          onClick={() => handleInsert('link')}
-          className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-40 disabled:pointer-events-none transition-colors"
-          title="Insert Hyperlink"
-        >
+        <button id="btn-format-link" disabled={!activeFile} onClick={() => handleInsert('link')} className={btnBase} title="Insert Hyperlink">
           <Link2 className="h-4 w-4" />
         </button>
-        <button
-          id="btn-format-image"
-          disabled={!activeFile}
-          onClick={() => handleInsert('image')}
-          className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-40 disabled:pointer-events-none transition-colors"
-          title="Insert Image"
-        >
+        <button id="btn-format-image" disabled={!activeFile} onClick={() => handleInsert('image')} className={btnBase} title="Insert Image">
           <Image className="h-4 w-4" />
         </button>
-        <button
-          id="btn-format-list"
-          disabled={!activeFile}
-          onClick={() => handleInsert('list')}
-          className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-40 disabled:pointer-events-none transition-colors"
-          title="Insert List Item"
-        >
+        <button id="btn-format-list" disabled={!activeFile} onClick={() => handleInsert('list')} className={btnBase} title="Insert List Item">
           <List className="h-4 w-4" />
         </button>
-        <button
-          id="btn-format-table"
-          disabled={!activeFile}
-          onClick={() => handleInsert('table')}
-          className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-40 disabled:pointer-events-none transition-colors"
-          title="Insert Markdown Table"
-        >
+        <button id="btn-format-table" disabled={!activeFile} onClick={() => handleInsert('table')} className={btnBase} title="Insert Markdown Table">
           <Table className="h-4 w-4" />
         </button>
 
-        {activeFile && (
-          <div className="h-4 w-px bg-gray-200 dark:bg-gray-800 mx-2 self-center hidden sm:block"></div>
-        )}
 
-        {/* Move File Folder Switcher Dropdown */}
-        {activeFile && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 pl-1">
-            <span className="hidden md:inline font-mono text-[11px] uppercase tracking-wider">Folder:</span>
-            <select
-              id="select-move-file-folder"
-              value={activeFile.folderId}
-              onChange={(e) => onMoveFile(activeFile.id, e.target.value)}
-              className="px-2 py-1 text-xs border border-gray-200 dark:border-gray-800 rounded bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gray-400 transition-colors"
-              title="Move file to another folder"
-            >
-              {folders.map(f => (
-                <option key={f.id} value={f.id}>
-                  {f.name} {f.isDefault ? '(Default)' : ''}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
       </div>
 
-      {/* Stats Counter (Hidden on extra small screens) */}
       {activeFile ? (
-        <div className="hidden lg:flex items-center gap-4 text-xs font-mono text-gray-400">
+        <div className="hidden lg:flex items-center gap-4 text-xs font-mono text-[var(--text-muted)]">
           <span>Words: <strong>{wCount}</strong></span>
           <span>Chars: <strong>{cCount}</strong></span>
         </div>
       ) : (
-        <div className="hidden lg:flex items-center gap-2 text-xs font-mono text-gray-400 italic">
+        <div className="hidden lg:flex items-center gap-2 text-xs font-mono text-[var(--text-muted)] italic">
           Select or create a file to start writing
         </div>
       )}
 
-      {/* General Actions, Backup, Toggle Themes, and View toggles */}
       <div className="flex items-center gap-2">
-        {/* Toggle dark/light theme */}
-        <button
-          id="btn-toggle-dark-mode"
-          onClick={onToggleDarkMode}
-          className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
-          title={darkMode ? 'Light Theme' : 'Dark Theme'}
-        >
+        <button id="btn-toggle-dark-mode" onClick={onToggleDarkMode} className={btnBase} title={darkMode ? 'Light Theme' : 'Dark Theme'}>
           {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </button>
 
-        <div className="h-4 w-px bg-gray-200 dark:bg-gray-800 self-center"></div>
+        <div className="h-4 w-px bg-[var(--border)] self-center"></div>
 
-        {/* Import & Export Active Document */}
         {activeFile && (
           <>
-            <button
-              id="btn-export-file"
-              onClick={onExportFile}
-              className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
-              title="Export (.md)"
-            >
-              <Download className="h-4 w-4" />
-            </button>
-            <button
-              id="btn-import-file"
-              onClick={() => fileInputRef.current?.click()}
-              className="p-1.5 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
-              title="Import (.md, .txt)"
-            >
+            <button id="btn-export-file" onClick={onExportFile} className={btnBase} title="Export (.md)">
               <Upload className="h-4 w-4" />
             </button>
-            <input
-              id="file-import-input"
-              type="file"
-              ref={fileInputRef}
-              onChange={onImportFile}
-              accept=".md,.txt"
-              className="hidden"
-            />
+            <button id="btn-import-file" onClick={() => fileInputRef.current?.click()} className={btnBase} title="Import (.md, .txt)">
+              <Download className="h-4 w-4" />
+            </button>
+            <input id="file-import-input" type="file" ref={fileInputRef} onChange={onImportFile} accept=".md,.txt" className="hidden" />
           </>
         )}
 
-        <div className="h-4 w-px bg-gray-200 dark:bg-gray-800 self-center"></div>
+        <div className="h-4 w-px bg-[var(--border)] self-center"></div>
 
-        {/* Global Workspace Backup (JSON) and Reset */}
         <div className="flex items-center gap-1.5">
-          <button
-            id="btn-export-workspace"
-            onClick={onExportWorkspace}
-            className="p-1.5 text-gray-500 hover:text-[#536dfe] dark:text-gray-400 dark:hover:text-[#536dfe] rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
-            title="Backup workspace (JSON)"
-          >
-            <Database className="h-4 w-4" />
+          <button id="btn-export-workspace" onClick={onExportWorkspace} className={`p-1.5 text-[var(--text-muted)] hover:text-terra rounded hover:bg-[var(--bg-btn-hover)] transition-colors`} title="Backup workspace (JSON)">
+            <Save className="h-4 w-4" />
           </button>
           
-          <button
-            id="btn-import-workspace"
-            onClick={() => workspaceInputRef.current?.click()}
-            className="p-1.5 text-gray-500 hover:text-emerald-500 dark:text-gray-400 dark:hover:text-emerald-400 rounded hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
-            title="Restore workspace backup (.json)"
-          >
-            <RefreshCw className="h-4 w-4" />
+          <button id="btn-import-workspace" onClick={() => workspaceInputRef.current?.click()} className={`p-1.5 text-[var(--text-muted)] hover:text-terra rounded hover:bg-[var(--bg-btn-hover)] transition-colors`} title="Restore workspace backup (.json)">
+            <FolderOpen className="h-4 w-4" />
           </button>
-          <input
-            id="workspace-import-input"
-            type="file"
-            ref={workspaceInputRef}
-            onChange={onImportWorkspace}
-            accept=".json"
-            className="hidden"
-          />
+          <input id="workspace-import-input" type="file" ref={workspaceInputRef} onChange={onImportWorkspace} accept=".json" className="hidden" />
 
           <button
             id="btn-reset-workspace"
@@ -313,17 +192,16 @@ export default function Toolbar({
           </button>
         </div>
 
-        <div className="h-4 w-px bg-gray-200 dark:bg-gray-800 self-center"></div>
+        <div className="h-4 w-px bg-[var(--border)] self-center"></div>
 
-        {/* Split/Focus Mode Toggle */}
-        <div className="flex bg-gray-100 dark:bg-gray-900 p-0.5 rounded-md">
+        <div className="flex bg-[var(--bg-btn)] border border-[var(--border)] p-0.5 rounded-md">
           <button
             id="btn-view-edit"
             onClick={() => onSetViewMode('edit')}
             className={`p-1.5 rounded-sm transition-all duration-150 ${
               viewMode === 'edit'
-                ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-950 shadow-xs font-semibold'
-                : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                ? 'bg-terra text-white shadow-xs font-semibold'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-heading)]'
             }`}
             title="Editor Only"
           >
@@ -334,8 +212,8 @@ export default function Toolbar({
             onClick={() => onSetViewMode('split')}
             className={`p-1.5 rounded-sm transition-all duration-150 ${
               viewMode === 'split'
-                ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-950 shadow-xs font-semibold'
-                : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                ? 'bg-terra text-white shadow-xs font-semibold'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-heading)]'
             }`}
             title="Split Mode (Ctrl+E)"
           >
@@ -346,8 +224,8 @@ export default function Toolbar({
             onClick={() => onSetViewMode('preview')}
             className={`p-1.5 rounded-sm transition-all duration-150 ${
               viewMode === 'preview'
-                ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-950 shadow-xs font-semibold'
-                : 'text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                ? 'bg-terra text-white shadow-xs font-semibold'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-heading)]'
             }`}
             title="Preview Only"
           >

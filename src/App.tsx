@@ -45,6 +45,7 @@ export default function App() {
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('split');
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   
   // Custom toast notification state
   const [toast, setToast] = useState<{ message: string; show: boolean; type?: 'info' | 'success' }>({
@@ -481,13 +482,9 @@ export default function App() {
   const activeFile = files.find(f => f.id === activeFileId) || null;
 
   return (
-    <div className={`h-screen w-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-[#0c0d0e] transition-colors duration-200`}>
+    <div className={`h-screen w-screen flex flex-col overflow-hidden bg-[var(--bg-main)] transition-colors duration-200`}>
       {/* Top Banner indicating offline reliability */}
       <header className="px-4 py-2 bg-gray-950 text-white flex items-center justify-between text-xs select-none">
-        <div className="flex items-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="font-mono text-[11px] font-medium text-gray-300">LiteMark Core: Ready & Persistent</span>
-        </div>
         <div className="flex items-center gap-4 text-[11px] font-mono text-gray-400">
           <span className="hidden md:inline">Ctrl+B: Bold</span>
           <span className="hidden md:inline">Ctrl+E: Cycle View</span>
@@ -512,10 +509,13 @@ export default function App() {
           onDeleteFolder={handleDeleteFolder}
           onRenameFile={handleRenameFile}
           onDeleteFile={handleDeleteFile}
+          onMoveFile={handleMoveFile}
+          isOpen={sidebarOpen}
+          setIsOpen={setSidebarOpen}
         />
 
         {/* Content Panel */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-[#111314]">
+        <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-panel)]">
           {/* Main Actions Control Toolbar */}
           <Toolbar
             activeFile={activeFile}
@@ -554,11 +554,11 @@ export default function App() {
 
       {/* Aesthetic floating toast notifications */}
       {toast.show && (
-        <div className="fixed bottom-6 right-6 flex items-center gap-2 p-3 rounded-lg shadow-lg bg-gray-900 border border-gray-800 text-white text-xs font-mono transition-opacity duration-300 z-50 animate-fade-in animate-bounce">
+        <div className="fixed bottom-6 right-6 flex items-center gap-2 p-3 rounded-lg shadow-lg bg-[var(--bg-panel)] border border-[var(--border)] text-[var(--text-heading)] text-xs font-mono transition-opacity duration-300 z-50 animate-fade-in animate-bounce">
           {toast.type === 'success' ? (
-            <Check className="h-4 w-4 text-emerald-400" />
+            <Check className="h-4 w-4 text-terra" />
           ) : (
-            <Sparkles className="h-4 w-4 text-indigo-400" />
+            <Sparkles className="h-4 w-4 text-terra" />
           )}
           <span>{toast.message}</span>
         </div>

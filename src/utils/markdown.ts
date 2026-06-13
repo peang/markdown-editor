@@ -384,7 +384,7 @@ export function compileMarkdown(markdown: string): string {
   const flushBlockquote = () => {
     if (inBlockquote) {
       const quoteContent = compileMarkdown(blockquoteLines.join('\n'));
-      html += `<blockquote class="border-l-4 border-gray-300 dark:border-gray-700 pl-4 py-1 my-4 italic text-gray-600 dark:text-gray-400">\n${quoteContent}\n</blockquote>\n`;
+      html += `<blockquote class="border-l-4 border-[var(--border)] pl-4 py-1 my-4 italic text-[var(--text-muted)]">\n${quoteContent}\n</blockquote>\n`;
       blockquoteLines = [];
       inBlockquote = false;
     }
@@ -392,26 +392,26 @@ export function compileMarkdown(markdown: string): string {
 
   const flushTable = () => {
     if (inTable) {
-      let tableHtml = '<div class="overflow-x-auto my-6 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm"><table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800 text-sm">\n';
+      let tableHtml = '<div class="overflow-x-auto my-6 border border-[var(--border)] rounded-lg shadow-sm"><table class="min-w-full divide-y divide-[var(--border)] text-sm">\n';
       
       // Render Header
-      tableHtml += '<thead><tr class="bg-gray-50 dark:bg-gray-900/50">\n';
+      tableHtml += '<thead><tr class="bg-[var(--bg-btn-hover)]">\n';
       tableHeaders.forEach((header, index) => {
         const align = tableAlignments[index] || 'left';
         const alignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left';
-        tableHtml += `<th class="px-4 py-3 font-semibold text-gray-700 dark:text-gray-300 ${alignClass}">${parseInlineMarkdown(header)}</th>\n`;
+        tableHtml += `<th class="px-4 py-3 font-semibold text-[var(--text-heading)] ${alignClass}">${parseInlineMarkdown(header)}</th>\n`;
       });
       tableHtml += '</tr></thead>\n';
 
       // Render Body
-      tableHtml += '<tbody class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-transparent">\n';
+      tableHtml += '<tbody class="divide-y divide-[var(--border)] bg-[var(--bg-panel)]">\n';
       tableRows.forEach((row) => {
-        tableHtml += '<tr class="hover:bg-gray-50/50 dark:hover:bg-gray-900/10 transition-colors">\n';
+        tableHtml += '<tr class="hover:bg-[var(--bg-btn-hover)] transition-colors">\n';
         for (let i = 0; i < tableHeaders.length; i++) {
           const colValue = row[i] || '';
           const align = tableAlignments[i] || 'left';
           const alignClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left';
-          tableHtml += `<td class="px-4 py-3 text-gray-600 dark:text-gray-400 ${alignClass}">${parseInlineMarkdown(colValue)}</td>\n`;
+          tableHtml += `<td class="px-4 py-3 text-[var(--text-body)] ${alignClass}">${parseInlineMarkdown(colValue)}</td>\n`;
         }
         tableHtml += '</tr>\n';
       });
@@ -442,10 +442,10 @@ export function compileMarkdown(markdown: string): string {
         const highlighted = highlightCode(codeText, codeBlockLanguage);
         const displayLang = codeBlockLanguage ? escapeHtml(codeBlockLanguage) : 'text';
         
-        html += `<div class="group relative my-6 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-[#0d1117] text-gray-800 dark:text-[#e6edf3]">
-          <div class="flex items-center justify-between px-4 py-1.5 bg-gray-100/50 dark:bg-[#161b22] border-b border-gray-200/50 dark:border-gray-800 text-xs font-mono text-gray-500 dark:text-gray-400 select-none">
+        html += `<div class="group relative my-6 rounded-lg overflow-hidden border border-[var(--border)] bg-[var(--bg-input)] text-[var(--text-body)]">
+          <div class="flex items-center justify-between px-4 py-1.5 bg-[var(--bg-main)] border-b border-[var(--border)] text-xs font-mono text-[var(--text-muted)] select-none">
             <span>${displayLang}</span>
-            <button onclick="navigator.clipboard.writeText(decodeURIComponent('${encodeURIComponent(codeText)}'))" class="hover:text-gray-900 dark:hover:text-white px-2 py-0.5 rounded transition-colors" title="Copy code">Copy</button>
+            <button onclick="navigator.clipboard.writeText(decodeURIComponent('${encodeURIComponent(codeText)}'))" class="hover:text-[var(--text-heading)] px-2 py-0.5 rounded transition-colors" title="Copy code">Copy</button>
           </div>
           <pre class="p-4 overflow-x-auto font-mono text-xs md:text-sm leading-relaxed"><code class="language-${codeBlockLanguage}">${highlighted}</code></pre>
         </div>\n`;
@@ -472,7 +472,7 @@ export function compileMarkdown(markdown: string): string {
     // Horizontal Rule
     if (/^(?:-{3,}|\*{3,}|_{3,})$/.test(line.trim())) {
       flushAll();
-      html += `<hr class="my-8 border-t border-gray-200 dark:border-gray-800" />\n`;
+      html += `<hr class="my-8 border-t border-[var(--border)]" />\n`;
       continue;
     }
 
@@ -485,12 +485,12 @@ export function compileMarkdown(markdown: string): string {
       const parsedText = parseInlineMarkdown(text);
       
       let headingClass = '';
-      if (level === 1) headingClass = 'text-3xl font-bold tracking-tight text-gray-900 dark:text-white mt-8 mb-4 border-b border-gray-100 dark:border-gray-800 pb-2';
-      else if (level === 2) headingClass = 'text-2xl font-semibold tracking-tight text-gray-900 dark:text-white mt-6 mb-3 border-b border-gray-50 dark:border-gray-900 pb-1';
-      else if (level === 3) headingClass = 'text-xl font-medium tracking-tight text-gray-900 dark:text-white mt-5 mb-2';
-      else if (level === 4) headingClass = 'text-lg font-medium text-gray-900 dark:text-white mt-4 mb-2';
-      else if (level === 5) headingClass = 'text-base font-medium text-gray-700 dark:text-gray-300 mt-4 mb-1';
-      else headingClass = 'text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mt-4 mb-1';
+      if (level === 1) headingClass = 'text-3xl font-bold tracking-tight text-[var(--text-heading)] mt-8 mb-4 border-b border-[var(--border)] pb-2';
+      else if (level === 2) headingClass = 'text-2xl font-semibold tracking-tight text-[var(--text-heading)] mt-6 mb-3 border-b border-[var(--border)] pb-1';
+      else if (level === 3) headingClass = 'text-xl font-medium tracking-tight text-[var(--text-heading)] mt-5 mb-2';
+      else if (level === 4) headingClass = 'text-lg font-medium text-[var(--text-heading)] mt-4 mb-2';
+      else if (level === 5) headingClass = 'text-base font-medium text-[var(--text-muted)] mt-4 mb-1';
+      else headingClass = 'text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)] mt-4 mb-1';
 
       html += `<h${level} class="${headingClass}">${parsedText}</h${level}>\n`;
       continue;
@@ -523,11 +523,11 @@ export function compileMarkdown(markdown: string): string {
         flushList();
         inList = true;
         listType = currentListType;
-        const listClass = listType === 'ul' ? 'list-disc pl-6 my-4 space-y-1.5 text-gray-700 dark:text-gray-300' : 'list-decimal pl-6 my-4 space-y-1.5 text-gray-700 dark:text-gray-300';
+        const listClass = listType === 'ul' ? 'list-disc pl-6 my-4 space-y-1.5 text-[var(--text-body)]' : 'list-decimal pl-6 my-4 space-y-1.5 text-[var(--text-body)]';
         html += `<${listType} class="${listClass}">\n`;
       }
 
-      html += `<li class="leading-relaxed hover:text-black dark:hover:text-white transition-colors">${parseInlineMarkdown(content)}</li>\n`;
+      html += `<li class="leading-relaxed hover:text-[var(--text-heading)] transition-colors">${parseInlineMarkdown(content)}</li>\n`;
       continue;
     } else {
       flushList();
@@ -575,7 +575,7 @@ export function compileMarkdown(markdown: string): string {
     }
 
     // Plain Paragraph
-    html += `<p class="my-4 leading-relaxed text-gray-700 dark:text-gray-300">${parseInlineMarkdown(line)}</p>\n`;
+    html += `<p class="my-4 leading-relaxed text-[var(--text-body)]">${parseInlineMarkdown(line)}</p>\n`;
   }
 
   // Final flush of any running states
@@ -591,24 +591,24 @@ export function parseInlineMarkdown(text: string): string {
   let res = escapeHtml(text);
 
   // Images: ![alt](url)
-  res = res.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="rounded max-h-96 my-4 leading-none inline break-inside-avoid border border-gray-100 dark:border-gray-800" referrerPolicy="no-referrer" />');
+  res = res.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="rounded max-h-96 my-4 leading-none inline break-inside-avoid border border-[var(--border)]" referrerPolicy="no-referrer" />');
 
   // Links: [text](url)
-  res = res.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline font-medium transition-colors">$1</a>');
+  res = res.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-terra hover:text-terra/80 underline font-medium transition-colors">$1</a>');
 
   // Strong / Bold: **text** or __text__
-  res = res.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-950 dark:text-white">$1</strong>');
-  res = res.replace(/__(.*?)__/g, '<strong class="font-bold text-gray-950 dark:text-white">$1</strong>');
+  res = res.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-[var(--text-heading)]">$1</strong>');
+  res = res.replace(/__(.*?)__/g, '<strong class="font-bold text-[var(--text-heading)]">$1</strong>');
 
   // Italic: *text* or _text_
   res = res.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
   res = res.replace(/_(.*?)_/g, '<em class="italic">$1</em>');
 
   // Strikethrough: ~~text~~
-  res = res.replace(/~~(.*?)~~/g, '<del class="line-through text-gray-400 dark:text-gray-500">$1</del>');
+  res = res.replace(/~~(.*?)~~/g, '<del class="line-through text-[var(--text-muted)]">$1</del>');
 
   // Inline Code: `code`
-  res = res.replace(/`(.*?)`/g, '<code class="px-1.5 py-0.5 rounded text-sm bg-gray-100 dark:bg-gray-800/80 text-rose-600 dark:text-rose-400 font-mono font-medium border border-gray-200/50 dark:border-gray-700/50">$1</code>');
+  res = res.replace(/`(.*?)`/g, '<code class="px-1.5 py-0.5 rounded text-sm bg-[var(--bg-btn-hover)] text-rose-600 font-mono font-medium border border-[var(--border)]">$1</code>');
 
   return res;
 }
