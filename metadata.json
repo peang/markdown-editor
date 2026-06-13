@@ -1,0 +1,6 @@
+{
+  "name": "Markdown Editor and Viewer",
+  "description": "A sleek, lightweight markdown editor and viewer focusing on performance, syntax highlighting, and local folder management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
